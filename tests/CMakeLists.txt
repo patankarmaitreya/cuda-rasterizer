@@ -10,6 +10,10 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
     rasterizer_tests
     test_cuda_ops.cpp
+    test_vec3.cpp
+    test_mat4.cpp
+    test_vec4.cpp
+    test_transform.cpp
 )
 
 target_link_libraries(
@@ -17,6 +21,7 @@ target_link_libraries(
     PRIVATE
         GTest::gtest_main
         CUDA-RASTERIZER::ops
+        CUDA-RASTERIZER::math
 )
 
 include(GoogleTest)
