@@ -17,6 +17,7 @@ set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 add_subdirectory(src)
+add_subdirectory(app)
 
 include(CTest)
 add_subdirectory(tests)
