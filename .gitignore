@@ -5,3 +5,6 @@ compile_commands.json
 .cursor/
 
 .DS_Store
+
+*.ppm
+*.png
