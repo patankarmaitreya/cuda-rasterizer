@@ -1,4 +1,5 @@
 #include <raster/rasterizer.hpp>
+#include <algorithm>
 
 float edgeFunction(const Vec3& a, const Vec3& b, const Vec3& p){
     return ((p.x - a.x)*(b.y - a.y)
@@ -20,6 +21,18 @@ Vec3 barycentricCoordinates(const Vec3& a, const Vec3& b, const Vec3& c, const V
     return Vec3{edgeFunction(b, c, p) / area,
                 edgeFunction(c, a, p) / area, 
                 edgeFunction(a, b, p) / area};
+}
+
+Vec3 computeFaceNormal(const Vec3& a, const Vec3& b,const Vec3& c){
+    Vec3 edge1 = b - a;
+    Vec3 edge2 = c - a;
+
+    return edge1.cross(edge2).normalized();
+}
+
+float lambertIntensity(const Vec3& normal, const Vec3& lightDirection){
+    float intensity = normal.dot(lightDirection);
+    return std::max(0.0f, intensity);
 }
 
 void rasterizeTriangle(RenderTarget& target, const Vec3& a, const Vec3& b, const Vec3& c, const Color& color){

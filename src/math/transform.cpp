@@ -17,3 +17,15 @@ bool isInsideFrustum(const Vec4& clip){
             (clip.y >= -1.0f * clip.w && clip.y <= clip.w) && 
             (clip.z >= -1.0f * clip.w && clip.z <= clip.w);
 }
+
+Vec3 transformVertexToScreen(const Vec3& vertex, const Mat4& model, const Mat4& view, const Mat4& projection, float width, float height){
+    Vec4 position{vertex.x, vertex.y, vertex.z, 1.0f};
+
+    Vec4 clip = projection * view * model * position;
+
+    Vec3 ndc = perspectiveDivide(clip);
+
+    Vec3 screen = viewportTransform(ndc, width, height);
+
+    return screen;
+}

@@ -1,32 +1,70 @@
-#include <raster/render_target.hpp>
-#include <raster/rasterizer.hpp>
+#include <math/transform.hpp>
+#include <raster/renderer.hpp>
 
 int main(){
-    RenderTarget target{200, 200};
+    RenderTarget target{400, 400};
 
-    Vec3 aNear{50.0f, 30.0f, 0.2f};
-    Vec3 bNear{150.0f, 30.0f, 0.2f};
-    Vec3 cNear{100.0f, 160.0f, 0.2f};
-
-    Vec3 aFar{50.0f, 30.0f, 0.7f};
-    Vec3 bFar{150.0f, 30.0f, 0.7f};
-    Vec3 cFar{100.0f, 160.0f, 0.7f};
-
-    Color black{0, 0, 0};
-    Color red{255, 0, 0};
-    Color blue{0, 0, 255};
-
-    target.framebuffer.clear(black);
+    target.framebuffer.clear({0, 0, 0});
     target.depthbuffer.clear();
 
-    rasterizeTriangle(target, aFar, bFar, cFar, blue);
-    rasterizeTriangle(target, aNear, bNear, cNear, red);
-    bool success1 = target.framebuffer.writePPM("triangle1.ppm");
+    Mesh cube;
 
-    rasterizeTriangle(target, aNear, bNear, cNear, red);
-    rasterizeTriangle(target, aFar, bFar, cFar, blue);
-    bool success2 = target.framebuffer.writePPM("triangle2.ppm");
+    cube.vertices = {
+        {-1.0f, -1.0f, -1.0f}, // 0
+        { 1.0f, -1.0f, -1.0f}, // 1
+        { 1.0f,  1.0f, -1.0f}, // 2
+        {-1.0f,  1.0f, -1.0f}, // 3
 
-    if(success1 && success2) return 0;
+        {-1.0f, -1.0f,  1.0f}, // 4
+        { 1.0f, -1.0f,  1.0f}, // 5
+        { 1.0f,  1.0f,  1.0f}, // 6
+        {-1.0f,  1.0f,  1.0f}  // 7
+    };
+
+    cube.triangles = {
+        // z = -1
+        {0, 2, 1},
+        {0, 3, 2},
+    
+        // z = +1
+        {4, 5, 6},
+        {4, 6, 7},
+    
+        // x = -1
+        {0, 7, 3},
+        {0, 4, 7},
+    
+        // x = +1
+        {1, 6, 5},
+        {1, 2, 6},
+    
+        // y = -1
+        {0, 5, 4},
+        {0, 1, 5},
+    
+        // y = +1
+        {3, 6, 2},
+        {3, 7, 6}
+    };
+
+    Vec3 e{3.0f, 3.0f, 5.0f};
+    Vec3 t{0.0f, 0.0f, 0.0f};
+    Vec3 u{0.0f, 1.0f, 0.0f};
+
+    Vec3 lightDirection{1.0f, 0.4f, 0.7f};
+    
+    float FOV = 90.0f;
+    float aspect = 1.0f;
+    float near = 1.0f;
+    float far = 10.0f;
+
+    Mat4 view = Mat4::lookAt(e, t, u);
+    Mat4 projection = Mat4::perspective(deg2rad(FOV), aspect, near, far);
+
+    renderMesh(target, cube, Mat4::identity(), view, projection, {255, 0, 0}, lightDirection);
+
+    bool success = target.framebuffer.writePPM("reference_cube.ppm");
+
+    if(success) return 0;
     else return 1;
 }

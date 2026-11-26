@@ -65,6 +65,20 @@ TEST(RasterizerTest, BarycentricCoordinatesTest) {
     EXPECT_NEAR(barycentricC.z, 1.0f, 1e-5f);
 }
 
+TEST(RasterizerTest, lambertIntensityTowardsLight) {
+    Vec3 normal{0,0,1};
+    Vec3 light{0,0,1};
+
+    EXPECT_FLOAT_EQ(lambertIntensity(normal, light), 1.0f);
+}
+
+TEST(RasterizerTest, lambertIntensityAwayFromLight) {
+    Vec3 normal{0,0,1};
+    Vec3 light{0,0,-1};
+
+    EXPECT_FLOAT_EQ(lambertIntensity(normal, light), 0.0f);
+}
+
 TEST(RasterizerTest, BarycentricCoordinatesSumTest){
     Vec3 A{1.0f, 1.0f, 0.0f};
     Vec3 B{5.0f, 1.0f, 0.0f};

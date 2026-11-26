@@ -5,14 +5,6 @@
 #include <math/vec3.hpp>
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-inline double deg2rad(double degrees) {
-    return degrees * M_PI / 180.0;
-}  
-
 TEST(TransformTest, PerspectiveDivideTest){
     Vec4 clip{2.0f, 1.0f, -1.0f, 4.0f};
 
@@ -132,4 +124,29 @@ TEST(TransformTest, PointInsideFrustumTest){
     Vec4 clip = projection * camera;
 
     EXPECT_TRUE(isInsideFrustum(clip));
+}
+
+TEST(TransformTest, TransformVertexToScreen){
+    Vec3 vertex{0.0f, 0.0f, 0.0f};
+
+    Vec3 e{0.0f, 0.0f, 5.0f};
+    Vec3 t{0.0f, 0.0f, 0.0f};
+    Vec3 u{0.0f, 1.0f, 0.0f};
+    
+    float FOV = 90.0f;
+    float aspect = 1.0f;
+    float near = 1.0f;
+    float far = 10.0f;
+
+    float width = 800.0f; 
+    float height = 800.0f;
+
+    Mat4 view = Mat4::lookAt(e, t, u);
+    Mat4 projection = Mat4::perspective(deg2rad(FOV), aspect, near, far);
+    
+    Vec3 screen = transformVertexToScreen(vertex, Mat4::identity(), view, projection, width, height);
+
+    EXPECT_NEAR(screen.x, 400.0f, 1e-4f);
+    EXPECT_NEAR(screen.y, 400.0f, 1e-4f);
+    EXPECT_NEAR(screen.z, 7.0f / 9.0f, 1e-4f);
 }

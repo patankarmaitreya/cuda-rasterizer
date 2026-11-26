@@ -26,6 +26,7 @@ add_library(
     raster/framebuffer.cpp
     raster/depthbuffer.cpp
     raster/rasterizer.cpp
+    raster/renderer.cpp
 )
 
 add_library(
@@ -68,6 +69,8 @@ target_include_directories(
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"   
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+
+target_link_libraries(raster PUBLIC math)
 
 install(
     TARGETS ops
